@@ -5,6 +5,7 @@ const cors = require("cors");
 const connectDb = require("./utils/connectDb");
 // Import routes
 const authRoutes = require("./routes/authRoutes");
+const imageRoutes = require("./routes/imageRoutes");
 
 const origins = [process.env.LOCAL_ORIGIN, process.env.PRODUCTION_ORIGIN];
 
@@ -22,6 +23,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use("/api/auth", authRoutes);
+app.use("/api/v1", imageRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello, World!");
