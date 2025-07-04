@@ -7,15 +7,7 @@ exports.registerUser = async (req, res) => {
     const { user } = req.body;
 
     // check all the required fields
-    const requiredFields = [
-      "username",
-      "password",
-      // "name.firstname",
-      "profession",
-      // "email.primary",
-      // "phone.primary",
-      "bloodGroup",
-    ];
+    const requiredFields = ["username", "password", "profession", "bloodGroup"];
     for (const field of requiredFields) {
       if (!user[field]) {
         return res.status(400).json({ message: `${field} is required` });
@@ -54,6 +46,66 @@ exports.registerUser = async (req, res) => {
     res
       .status(400)
       .json({ message: "Failed to create user", error: error.message });
+  }
+};
+
+exports.updateUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { user } = req.body;
+
+    if (!user) {
+      return res.status(400).json({ message: "User data is required" });
+    }
+
+    // Fetch current user
+    const existingUser = await User.findById(userId);
+    if (!existingUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Block updates to username
+    if (user.username && user.username !== existingUser.username) {
+      return res.status(400).json({ message: "Username cannot be updated" });
+    }
+
+    // Block updates to primary email
+    if (
+      user.email &&
+      user.email.primary &&
+      user.email.primary !== existingUser.email.primary
+    ) {
+      return res
+        .status(400)
+        .json({ message: "Primary email cannot be updated" });
+    }
+
+    // Merge existing user with updated data (shallow merge, handles nested fields if passed fully)
+    const updatedData = {
+      ...existingUser.toObject(),
+      ...user,
+      email: {
+        ...existingUser.email,
+        ...user.email,
+        primary: existingUser.email.primary, // force keep original primary email
+      },
+      username: existingUser.username, // force keep original username
+    };
+
+    // Update user
+    const updatedUser = await User.findByIdAndUpdate(userId, updatedData, {
+      new: true,
+      runValidators: true,
+    });
+
+    res
+      .status(200)
+      .json({ message: "User updated successfully", user: updatedUser });
+  } catch (error) {
+    console.error("Update error:", error);
+    res
+      .status(500)
+      .json({ message: "Failed to update user", error: error.message });
   }
 };
 
