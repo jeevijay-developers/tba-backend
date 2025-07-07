@@ -153,9 +153,7 @@ exports.getEventGalleryById = async (req, res) => {
 
 exports.updateEventGalleryById = async (req, res) => {
   try {
-    const {blog} = req.body
-    console.log("blog ---> ",blog);
-    
+    const {blog} = req.body    
     if(blog.blog.bhead === ""  || blog.blog.blogPara1 === "" || blog.title === "" || blog.desc === "" ){
       return res.status(400).json({message: "All the fields are required"});
     }
