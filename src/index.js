@@ -7,7 +7,12 @@ const connectDb = require("./utils/connectDb");
 const authRoutes = require("./routes/authRoutes");
 const imageRoutes = require("./routes/imageRoutes");
 
-const origins = [process.env.LOCAL_ORIGIN, process.env.PRODUCTION_ORIGIN];
+const origins = [
+  process.env.LOCAL_ORIGIN,
+  process.env.PRODUCTION_ORIGIN,
+  process.env.LOCAL_ADMIN_ORIGIN,
+  process.env.PRODUCTION_ADMIN_ORIGIN,
+];
 
 const corsOptions = {
   origin: function (origin, callback) {
