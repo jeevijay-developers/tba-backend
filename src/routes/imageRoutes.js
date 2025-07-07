@@ -3,6 +3,10 @@ const {
   uploadEventGalleryImage,
   getGallery,
   getEventGallery,
+  deleteGallery,
+  deleteEventGallery,
+  getEventGalleryById,
+  getGalleryById,
 } = require("../controllers/image.controller");
 const upload = require("../utils/multer");
 const express = require("express");
@@ -20,5 +24,10 @@ router.post(
 
 router.get("/get-gallery", getGallery);
 router.get("/get-event-gallery", getEventGallery);
+
+router.delete("/gallery/:id", deleteGallery);
+router.delete("/event-gallery/:id", deleteEventGallery);
+router.get("/get-event-gallery/:id", getEventGalleryById);
+router.get("/get-gallery/:id", getGalleryById);
 
 module.exports = router;

@@ -94,3 +94,59 @@ exports.getEventGallery = async (req, res) => {
     res.status(500).json({ error: "Server Error" });
   }
 };
+
+exports.deleteGallery = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedGallery = await Gallery.findByIdAndDelete(id);
+    if (!deletedGallery) {
+      return res.status(404).json({ error: "Gallery not found" });
+    }
+    res.status(200).json({ message: "Gallery deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting gallery:", error);
+    res.status(500).json({ error: "Server Error" });
+  }
+};
+
+exports.deleteEventGallery = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedEvent = await EventGallery.findByIdAndDelete(id);
+    if (!deletedEvent) {
+      return res.status(404).json({ error: "Event gallery not found" });
+    }
+    res.status(200).json({ message: "Event gallery deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting event gallery:", error);
+    res.status(500).json({ error: "Server Error" });
+  }
+};
+
+exports.getGalleryById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const gallery = await Gallery.findById(id);
+    if (!gallery) {
+      return res.status(404).json({ error: "Gallery not found" });
+    }
+    res.status(200).json(gallery);
+  } catch (error) {
+    console.error("Error fetching gallery by ID:", error);
+    res.status(500).json({ error: "Server Error" });
+  }
+};
+
+exports.getEventGalleryById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const eventGallery = await EventGallery.findById(id);
+    if (!eventGallery) {
+      return res.status(404).json({ error: "Event gallery not found" });
+    }
+    res.status(200).json(eventGallery);
+  } catch (error) {
+    console.error("Error fetching event gallery by ID:", error);
+    res.status(500).json({ error: "Server Error" });
+  }
+};
