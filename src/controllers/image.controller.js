@@ -150,3 +150,80 @@ exports.getEventGalleryById = async (req, res) => {
     res.status(500).json({ error: "Server Error" });
   }
 };
+
+exports.updateEventGalleryById = async (req, res) => {
+  try {
+    const {blog} = req.body
+    console.log("blog ---> ",blog);
+    
+    if(blog.blog.bhead === ""  || blog.blog.blogPara1 === "" || blog.title === "" || blog.desc === "" ){
+      return res.status(400).json({message: "All the fields are required"});
+    }
+
+    const BLOG = await EventGallery.findById(blog._id)
+    if(!BLOG) return res.status(404).json({message: "Event not found"})
+
+    BLOG.title = blog.title
+    BLOG.desc = blog.desc
+    BLOG.blog.bhead = blog.blog.bhead
+    BLOG.blog.blogPara1 = blog.blog.blogPara1
+
+    await BLOG.save()
+    return res.status(200).json({message: "Event updated succesfully"})
+
+  } catch (error) {
+    console.error("Error updating event gallery by ID:", error);
+    res.status(500).json({ error: "Server Error" });
+  }
+}
+
+exports.updateGalleryById = async (req,res) => {
+  try {
+    const {gallery} = req.body 
+    console.log("Gallery -->", gallery);
+
+    const GALLERY = await Gallery.findById(gallery._id)
+
+    if(!GALLERY) return res.satus(404).json({message: "Gallery not found"})
+
+      GALLERY.title = gallery.title
+
+      await GALLERY.save()
+      return res.status(200).json({message: "Gallery updated successfully"})
+
+  } catch (error) {
+    console.error("Error updating gallery by ID:", error);
+    res.status(500).json({ error: "Server Error" });
+  }
+}
+
+exports.addImagesInGallery = async (req, res) => {
+  try {
+    const gallery = JSON.parse(req.body.gallery);
+    console.log("Gallery --> ", gallery);
+
+    const GALLERY = await Gallery.findById(gallery._id);
+    if (!GALLERY) {
+      return res.status(404).json({ message: "No gallery found" });
+    }
+
+    if (!req.files || !req.files.images || req.files.images.length === 0) {
+      return res.status(400).json({ error: "Images are required." });
+    }
+
+    const uploadedImages = [];
+
+    for (const file of req.files.images) {
+      const result = await uploadToCloudinary(file.buffer);
+      uploadedImages.push({ url: result.url });
+    }
+
+    GALLERY.images.push(...uploadedImages);
+    const savedGallery = await GALLERY.save();
+
+    return res.status(201).json(savedGallery);
+  } catch (error) {
+    console.error("Error adding images in gallery", error);
+    res.status(500).json({ error: "Server Error" });
+  }
+};
