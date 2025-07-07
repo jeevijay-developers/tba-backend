@@ -8,7 +8,8 @@ const {
   getEventGalleryById,
   getGalleryById,
   updateEventGalleryById,
-  updateGalleryById
+  updateGalleryById,
+  addImagesInGallery
 } = require("../controllers/image.controller");
 const upload = require("../utils/multer");
 const express = require("express");
@@ -33,5 +34,9 @@ router.get("/get-event-gallery/:id", getEventGalleryById);
 router.get("/get-gallery/:id", getGalleryById);
 router.put("/update-event-gallery", updateEventGalleryById)
 router.put("/update-gallery", updateGalleryById)
+router.post("/add-images-in-gallery", upload.fields([
+    { name: "images", maxCount: 10 },
+    { name: "gallery", maxCount: 1 }
+  ]), addImagesInGallery)
 
 module.exports = router;

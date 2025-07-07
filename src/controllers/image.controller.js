@@ -196,3 +196,34 @@ exports.updateGalleryById = async (req,res) => {
     res.status(500).json({ error: "Server Error" });
   }
 }
+
+exports.addImagesInGallery = async (req, res) => {
+  try {
+    const gallery = JSON.parse(req.body.gallery);
+    console.log("Gallery --> ", gallery);
+
+    const GALLERY = await Gallery.findById(gallery._id);
+    if (!GALLERY) {
+      return res.status(404).json({ message: "No gallery found" });
+    }
+
+    if (!req.files || !req.files.images || req.files.images.length === 0) {
+      return res.status(400).json({ error: "Images are required." });
+    }
+
+    const uploadedImages = [];
+
+    for (const file of req.files.images) {
+      const result = await uploadToCloudinary(file.buffer);
+      uploadedImages.push({ url: result.url });
+    }
+
+    GALLERY.images.push(...uploadedImages);
+    const savedGallery = await GALLERY.save();
+
+    return res.status(201).json(savedGallery);
+  } catch (error) {
+    console.error("Error adding images in gallery", error);
+    res.status(500).json({ error: "Server Error" });
+  }
+};
