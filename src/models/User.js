@@ -94,6 +94,10 @@ const userSchema = new mongoose.Schema({
       phone: String,
     },
   },
+  approve: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 userSchema.pre("save", async function (next) {
