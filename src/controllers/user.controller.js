@@ -91,12 +91,12 @@ exports.rejectAll = async (req, res) => {
 exports.getUsers = async (req, res) => {
   const { page, limit } = req.query;
   try {
-    const users = await User.find()
+    const users = await User.find({ role: "user" })
       .skip((page - 1) * limit)
-      .limit(limit);
+      .limit(limit)
     res.json(users);
   } catch (error) {
     console.error("Get users error:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error on getting users" });
   }
 };
